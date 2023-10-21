@@ -14,6 +14,12 @@ export class FetchProductController {
       throw new BadRequestException();
     }
 
+    if (!products.value) {
+      return {
+        products: [],
+      };
+    }
+
     return {
       products: products.value.products.map(ProductPresenter.toHTTP),
     };
