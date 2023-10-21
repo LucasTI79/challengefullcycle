@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  server:
+    container_name: server
+    command: >
+      go mod tidy &&
+      go run main.go grpc
+    env_file:
+      - .env.development
+    ports:
+      - 50051:50051
+    build: 
+      context: ./challengegrpc
+      dockerfile: Dockerfile
+    volumes:
+      - ./challengegrpc:/go/src/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  db:
+    image: postgres:9.4
+    restart: always
+    tty: true
+    volumes:
+      - .pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=challengegrpc
+    ports:
+      - "5432:5432"
+  
+  client:
+    container_name: client
+    command: >
+      npm ci &&
+      npm start:dev
+    env_file:
+      - .env.development
+    build:
+      context: ./challengenest
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./challengenest:/home/node/app
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+  pgadmin:
+    image: dpage/pgadmin4
+    tty: true
+    env_file:
+    - .env.development
+    ports:
+      - "9000:80"
+    depends_on:
+      - db

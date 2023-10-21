@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  server:
+    build:
+      context: ./challengegrpc
+      dockerfile: Dockerfile.prod
+    env_file:
+      - .env
+    depends_on:
+      db: 
+        condition: service_healthy
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  client:
+    build:
+      context: ./challengenest
+      dockerfile: Dockerfile.prod
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      db: 
+        condition: service_healthy
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - .docker/dbdata:/var/lib/postgresql/data
+      - .docker/postgres:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+    - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s  
