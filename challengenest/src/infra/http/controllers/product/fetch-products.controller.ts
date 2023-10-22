@@ -14,14 +14,14 @@ export class FetchProductController {
       throw new BadRequestException();
     }
 
-    if (!products.value) {
+    if (!products?.value) {
       return {
         products: [],
       };
     }
 
     return {
-      products: products.value.products.map(ProductPresenter.toHTTP),
+      products: products.value?.products?.map(ProductPresenter.toHTTP) || [],
     };
   }
 }

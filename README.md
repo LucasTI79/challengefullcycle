@@ -1,12 +1,13 @@
-### Instruções para executar
+## Instruções para executar
 
+### Dev
 
-Baixe os submódulos do projeto
+Subir o ambiente com makefile
 ```sh
-git submodule update --init --recursive
+make start-dev
 ```
 
-Suba o ambiente
+Subir o ambiente com docker compose
 ```sh
 docker compose up -d
 ```

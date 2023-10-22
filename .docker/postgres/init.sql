@@ -1,1 +1,2 @@
 CREATE DATABASE challengegrpc;
+CREATE ROLE root WITH PASSWORD 'root';
